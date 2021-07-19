@@ -2,6 +2,13 @@
 #include "Street.h"
 
 
+Street::Street()
+:m_start_intersection_id(0)
+, m_end_intersection_id(0)
+, m_travel_time_seconds(0)
+{
+}
+
 Street::Street(uint32_t start_intersection_id, uint32_t end_intersection_id, uint32_t travel_time_seconds)
 :m_start_intersection_id(start_intersection_id)
 , m_end_intersection_id(end_intersection_id)
@@ -11,7 +18,7 @@ Street::Street(uint32_t start_intersection_id, uint32_t end_intersection_id, uin
 
 void Street::AddCar(Car car)
 {
-	m_car_queue.push_back(car);
+	m_temporary_car_queue.push_back(car);
 }
 
 std::deque<Car> Street::GetCarQueue()
@@ -19,9 +26,16 @@ std::deque<Car> Street::GetCarQueue()
 	return m_car_queue;
 }
 
+bool Street::IsEmpty()
+{
+	return m_car_queue.empty();
+}
+
 Car Street::GetFrontCar()
 {
-	return m_car_queue.front();
+	Car front_car = m_car_queue.front();
+	m_car_queue.pop_front();
+	return front_car;
 }
 
 uint32_t Street::GetTravelTimeSeconds()
@@ -37,4 +51,12 @@ uint32_t Street::GetStartIntersectionID()
 uint32_t Street::GetEndIntersectionID()
 {
 	return m_end_intersection_id;
+}
+
+void Street::Update()
+{
+	for (auto car : m_temporary_car_queue)
+	{
+		m_car_queue.push_back(car);
+	}
 }
