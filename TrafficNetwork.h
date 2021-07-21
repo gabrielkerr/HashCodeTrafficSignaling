@@ -25,4 +25,5 @@ public:
 	void Step();
 	uint32_t GetTimeLimit();
 	uint32_t GetTimeLeft();
+	std::map<std::string, Street> GetStreetState();
 };

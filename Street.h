@@ -21,8 +21,8 @@ public:
 	void AddCar(Car car);
 	std::deque<Car> GetCarQueue();
 	bool IsEmpty();
-	// Pops the front car from the car queue and retrieves it. 
-	Car GetFrontCar();
+	Car* GetFrontCar();
+	void RemoveFrontCar();
 	uint32_t GetTravelTimeSeconds();
 	uint32_t GetStartIntersectionID();
 	uint32_t GetEndIntersectionID();

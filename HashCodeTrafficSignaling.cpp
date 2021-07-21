@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 
 #include "Car.h"
 #include "Street.h"
@@ -19,7 +20,17 @@ int main()
     // Create the traffic network
     TrafficNetwork trafficNetwork;
     trafficNetwork.BuildTrafficNetwork("Input/a.txt");
-    trafficNetwork.Step();
+	cout << "Begining traffic simulation." << endl << endl;
+    while (trafficNetwork.GetTimeLeft() > 0)
+    {
+		trafficNetwork.Step();
+		map<string, Street> street_map = trafficNetwork.GetStreetState();
+		for (auto street_map_iter = street_map.begin(); street_map_iter != street_map.end(); ++street_map_iter)
+		{
+			cout << street_map_iter->first << " has " << street_map_iter->second.GetCarQueue().size() << " cars" << endl;
+		}
+		cout << "----------" << endl;
+    }
 }
 
 /*

@@ -31,11 +31,19 @@ bool Street::IsEmpty()
 	return m_car_queue.empty();
 }
 
-Car Street::GetFrontCar()
+Car* Street::GetFrontCar()
 {
-	Car front_car = m_car_queue.front();
+	Car* p_front_car = nullptr; 
+	if (!m_car_queue.empty())
+	{
+		p_front_car = &(m_car_queue.front());
+	}
+	return p_front_car;
+}
+
+void Street::RemoveFrontCar()
+{
 	m_car_queue.pop_front();
-	return front_car;
 }
 
 uint32_t Street::GetTravelTimeSeconds()
@@ -59,4 +67,5 @@ void Street::Update()
 	{
 		m_car_queue.push_back(car);
 	}
+	m_temporary_car_queue.clear();
 }

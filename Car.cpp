@@ -1,4 +1,5 @@
 #include "Car.h"
+#include "Street.h"
 
 Car::Car()
 :m_current_street_travel_time_seconds(0)
@@ -20,16 +21,22 @@ void Car::SetJourneyPath(std::vector<std::string> journey_path)
 	}
 }
 
-// TODO This should just increment the travel time.
-std::string Car::Drive()
+std::string Car::Drive(Street& street)
 {
+	m_current_street_travel_time_seconds++;
 	// Update journey index.
-	if (m_current_journey_index + 1 < m_journey_path.size())
+	if (m_current_street_travel_time_seconds >= street.GetTravelTimeSeconds())
 	{
-		m_current_journey_index++;
+		if (m_current_journey_index + 1 < m_journey_path.size())
+		{
+			m_current_journey_index++;
+		}
 	}
 
 	return m_journey_path[m_current_journey_index];
 }
 
-// TODO Create function to move to next street.
+bool Car::DidCompleteJourney()
+{
+	return m_current_journey_index >= m_journey_path.size();
+}

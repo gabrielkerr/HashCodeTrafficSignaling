@@ -123,19 +123,26 @@ void TrafficNetwork::Step()
 	auto street_iter = m_street_map.begin();
 	for (street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
 	{
-		Street street = street_iter->second;
-		// NOTE May want to get reference to the front car...
-		if (street.IsEmpty())
-		{
-			continue;
-		}
-		Car front_car = street.GetFrontCar();
+		Street& street = street_iter->second;
+		Car* front_car = street.GetFrontCar();
 
-		// TODO
-		// Make sure the car's travel time is equal to the street's travel time
-		// before moving it to the next street.
-		std::string next_street = front_car.Drive();
-		m_street_map[next_street].AddCar(front_car);
+		if (front_car)
+		{
+			// Make sure the car's travel time is equal to the street's travel time
+			// before moving it to the next street.
+			std::string next_street = front_car->Drive(street);
+			if (next_street != street_iter->first)
+			{
+				m_street_map[next_street].AddCar(*front_car);
+				street.RemoveFrontCar();
+			}
+			// Remove the car from the traffic network if it has completed its journey.
+			else if (front_car->DidCompleteJourney())
+			{
+				street.RemoveFrontCar();
+				// TODO Accumulate points.
+			}
+		}
 	}
 
 	// Update all streets.
@@ -144,17 +151,9 @@ void TrafficNetwork::Step()
 		street_iter->second.Update();
 	}
 
-	// TODO 
-	// Obey the laws of time. Advancing by one step could mean the car
-	// stays on its current street if the travel time is long.
-	// TODO Need mechanism for tracking how long the car has been traveling
-	// along the current street.
 
 	// TODO 
 	// Obey traffic rules. Only move the car forward if the light is green.
-
-	// TODO 
-	// After the front car has been updated for this street
 
 	if (m_time_left > 0)
 	{
@@ -170,4 +169,9 @@ uint32_t TrafficNetwork::GetTimeLimit()
 uint32_t TrafficNetwork::GetTimeLeft()
 {
 	return m_time_left;
+}
+
+std::map<std::string, Street> TrafficNetwork::GetStreetState()
+{
+	return m_street_map;
 }
