@@ -22,7 +22,17 @@ bool Intersection::IsLightGreenAtStreet(const std::string& street_name)
 	return m_traffic_light_map[street_name].IsGreen();
 }
 
+// TODO NOTE Maybe the intersection shouldn't toggle the light, but
+// the light should govern itself
 void Intersection::ToggleLightAtStreet(const std::string& street_name)
 {
 	m_traffic_light_map[street_name].Toggle();
+}
+
+void Intersection::Update()
+{
+	for (auto iter = m_traffic_light_map.begin(); iter != m_traffic_light_map.end(); ++iter)
+	{
+		iter->second.Update();
+	}
 }

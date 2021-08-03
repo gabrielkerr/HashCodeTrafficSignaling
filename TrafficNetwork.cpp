@@ -68,7 +68,7 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 			// Build intersection map
 			for (uint32_t i(0); i < I; ++i)
 			{
-				// TODO Add in-streets to each intersection.
+				// Add in-streets to each intersection.
 				Intersection intersection;
 				m_intersections[i] = intersection;
 			}
@@ -132,6 +132,7 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 void TrafficNetwork::Step()
 {
 	// TODO Add time bonus if time is remaining and all cars have arrived.
+	// TODO Stop simulation early if all cars have arrived
 
 	bool did_find_cars = false;
 	// For each street, get the front car and advance it one step along its
@@ -156,6 +157,7 @@ void TrafficNetwork::Step()
 			{
 				m_street_map[next_street].AddCar(*front_car);
 				street.RemoveFrontCar();
+				// TODO Do we want to remove the car at this stage if it completed its journey?
 			}
 			// Remove the car from the traffic network if it has completed its journey.
 			else if (front_car->DidCompleteJourney())
@@ -165,7 +167,7 @@ void TrafficNetwork::Step()
 				m_point_total += m_car_arrival_bonus;
 			}
 		}
-		if (front_car)
+		if (front_car && !did_find_cars)
 		{
 			did_find_cars = true;
 		}
@@ -177,7 +179,11 @@ void TrafficNetwork::Step()
 		street_iter->second.Update();
 	}
 
-	// TODO Update all intersection lights
+	// Update all intersection lights
+	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
+	{
+		intersection_iter->second.Update();
+	}
 
 	if (m_time_left > 0)
 	{

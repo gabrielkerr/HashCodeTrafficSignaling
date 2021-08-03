@@ -26,5 +26,5 @@ public:
 	void ToggleLightAtStreet(const std::string& street_name);
 
 	// TODO Advance time on all traffic lights, toggling where appropriate.
-	// void Update();
+	void Update();
 };
