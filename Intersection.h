@@ -1,18 +1,30 @@
 #pragma once
+
+#include <string>
 #include <vector>
+#include <map>
+#include <set>
+
 #include "TrafficLight.h"
 
 class Intersection
 {
 private:
-	std::vector<TrafficLight> m_traffic_lights;
+	std::map<std::string, TrafficLight> m_traffic_light_map;
+	std::set<std::string> m_in_street_names;
 
 public:
 	Intersection();
 
-	Intersection(std::vector<TrafficLight> traffic_lights);
-
-	void AddTrafficLight(TrafficLight traffic_light);
+	// Adds street with traffic light to the intersection.
+	void AddInStreet(std::string& street_name);
 
 	int GetTrafficLightCount();
+
+	bool IsLightGreenAtStreet(const std::string& street_name);
+
+	void ToggleLightAtStreet(const std::string& street_name);
+
+	// TODO Advance time on all traffic lights, toggling where appropriate.
+	// void Update();
 };

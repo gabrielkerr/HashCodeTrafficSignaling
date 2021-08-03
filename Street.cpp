@@ -4,15 +4,20 @@
 
 Street::Street()
 :m_start_intersection_id(0)
-, m_end_intersection_id(0)
-, m_travel_time_seconds(0)
+,m_end_intersection_id(0)
+,m_travel_time_seconds(0)
+,m_name("")
 {
 }
 
-Street::Street(uint32_t start_intersection_id, uint32_t end_intersection_id, uint32_t travel_time_seconds)
+Street::Street(uint32_t start_intersection_id, 
+	           uint32_t end_intersection_id, 
+	           uint32_t travel_time_seconds,
+	           std::string name)
 :m_start_intersection_id(start_intersection_id)
-, m_end_intersection_id(end_intersection_id)
-, m_travel_time_seconds(travel_time_seconds)
+,m_end_intersection_id(end_intersection_id)
+,m_travel_time_seconds(travel_time_seconds)
+,m_name(name)
 {
 }
 

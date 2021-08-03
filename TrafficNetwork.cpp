@@ -15,6 +15,7 @@ TrafficNetwork::TrafficNetwork()
 	,m_time_left(0)
 	,m_car_arrival_bonus(0)
 	,m_point_total(0)
+	,m_is_network_empty(false)
 {
 }
 
@@ -63,6 +64,14 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 			std::cout << "Number of Cars:\t\t\t" << V << std::endl;
 			std::cout << "Bonus Points for Each Car:\t" << F <<  std::endl;
 			m_car_arrival_bonus = F;
+
+			// Build intersection map
+			for (uint32_t i(0); i < I; ++i)
+			{
+				// TODO Add in-streets to each intersection.
+				Intersection intersection;
+				m_intersections[i] = intersection;
+			}
 		}
 		// The next S lines contain descriptions of streets.
 		// Two integers B and E, intersection IDs at the start and end of the streets respectively
@@ -77,10 +86,13 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 			E = atoi(street_info_tokens[1].c_str());
 			std::string street_name = street_info_tokens[2];
 			L = atoi(street_info_tokens[3].c_str());
-			Street street(B, E, L);
+			Street street(B, E, L, street_name);
 
-			// TODO Add street to the network, make some sort of graph?
+			// Add street to the network
 			m_street_map.insert(std::pair<std::string, Street>(street_name, street));
+
+			// Update intersections with appropriate in-street
+			m_intersections[street.GetEndIntersectionID()].AddInStreet(street_name);
 		}
 		// The next V lines describe the paths of each car
 		// Integer P, number of streets the car wants to travel
@@ -105,6 +117,7 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 			car.SetCurrentTravelTime(starting_street.GetTravelTimeSeconds());
 			starting_street.AddCar(car);
 			starting_street.Update();
+
 		}
 
 		// Do work above this line
@@ -118,6 +131,9 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 */
 void TrafficNetwork::Step()
 {
+	// TODO Add time bonus if time is remaining and all cars have arrived.
+
+	bool did_find_cars = false;
 	// For each street, get the front car and advance it one step along its
 	// journey path
 	auto street_iter = m_street_map.begin();
@@ -126,7 +142,12 @@ void TrafficNetwork::Step()
 		Street& street = street_iter->second;
 		Car* front_car = street.GetFrontCar();
 
-		if (front_car)
+		// Get intersection at the end of this street.
+		Intersection& intersection = m_intersections[street.GetEndIntersectionID()];
+
+
+		// Obey traffic rules. Only move the car forward if the light is green.
+		if (front_car && intersection.IsLightGreenAtStreet(street.GetName()))
 		{
 			// Make sure the car's travel time is equal to the street's travel time
 			// before moving it to the next street.
@@ -140,8 +161,13 @@ void TrafficNetwork::Step()
 			else if (front_car->DidCompleteJourney())
 			{
 				street.RemoveFrontCar();
-				// TODO Accumulate points.
+				// Accumulate points.
+				m_point_total += m_car_arrival_bonus;
 			}
+		}
+		if (front_car)
+		{
+			did_find_cars = true;
 		}
 	}
 
@@ -151,14 +177,14 @@ void TrafficNetwork::Step()
 		street_iter->second.Update();
 	}
 
-
-	// TODO 
-	// Obey traffic rules. Only move the car forward if the light is green.
+	// TODO Update all intersection lights
 
 	if (m_time_left > 0)
 	{
 		m_time_left--;
 	}
+
+	m_is_network_empty = true;
 }
 
 uint32_t TrafficNetwork::GetTimeLimit()

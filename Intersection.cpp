@@ -5,17 +5,24 @@ Intersection::Intersection()
 {
 }
 
-Intersection::Intersection(std::vector<TrafficLight> traffic_lights)
+void Intersection::AddInStreet(std::string& street_name)
 {
-	m_traffic_lights = traffic_lights;
-}
-
-void Intersection::AddTrafficLight(TrafficLight traffic_light)
-{
-	m_traffic_lights.push_back(traffic_light);
+	m_in_street_names.insert(street_name);
+	TrafficLight traffic_light;
+	m_traffic_light_map[street_name] = traffic_light;
 }
 
 int Intersection::GetTrafficLightCount()
 {
-	return m_traffic_lights.size();
+	return m_traffic_light_map.size();
+}
+
+bool Intersection::IsLightGreenAtStreet(const std::string& street_name)
+{
+	return m_traffic_light_map[street_name].IsGreen();
+}
+
+void Intersection::ToggleLightAtStreet(const std::string& street_name)
+{
+	m_traffic_light_map[street_name].Toggle();
 }
