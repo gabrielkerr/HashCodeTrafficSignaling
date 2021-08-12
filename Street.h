@@ -22,7 +22,7 @@ public:
 		   uint32_t travel_time_seconds,
 		   std::string name);
 	void AddCar(Car car);
-	std::deque<Car> GetCarQueue();
+	std::deque<Car>* GetCarQueue();
 	bool IsEmpty();
 	Car* GetFrontCar();
 	void RemoveFrontCar();

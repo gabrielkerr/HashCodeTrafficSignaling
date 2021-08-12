@@ -10,6 +10,7 @@ private:
 	std::vector<std::string> m_journey_path;
 	uint32_t m_current_street_travel_time_seconds;
 	uint32_t m_current_journey_index;
+	bool m_is_at_end_of_street;
 
 public:
 	Car();
@@ -23,4 +24,6 @@ public:
 	std::string Drive(Street& street);
 
 	bool DidCompleteJourney();
+
+	inline bool IsAtEndOfStreet() { return m_is_at_end_of_street; }
 };

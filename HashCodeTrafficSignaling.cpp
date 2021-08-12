@@ -27,7 +27,7 @@ int main()
 		map<string, Street> street_map = trafficNetwork.GetStreetState();
 		for (auto street_map_iter = street_map.begin(); street_map_iter != street_map.end(); ++street_map_iter)
 		{
-			cout << street_map_iter->first << " has " << street_map_iter->second.GetCarQueue().size() << " cars" << endl;
+			cout << street_map_iter->first << " has " << street_map_iter->second.GetCarQueue()->size() << " cars" << endl;
 		}
 		cout << "----------" << endl;
     }

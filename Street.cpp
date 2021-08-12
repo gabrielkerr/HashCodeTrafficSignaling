@@ -26,9 +26,9 @@ void Street::AddCar(Car car)
 	m_temporary_car_queue.push_back(car);
 }
 
-std::deque<Car> Street::GetCarQueue()
+std::deque<Car>* Street::GetCarQueue()
 {
-	return m_car_queue;
+	return &m_car_queue;
 }
 
 bool Street::IsEmpty()

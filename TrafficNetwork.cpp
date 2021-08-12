@@ -131,7 +131,6 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 */
 void TrafficNetwork::Step()
 {
-	// TODO Add time bonus if time is remaining and all cars have arrived.
 	// TODO Stop simulation early if all cars have arrived
 
 	bool did_find_cars = false;
@@ -157,14 +156,21 @@ void TrafficNetwork::Step()
 			{
 				m_street_map[next_street].AddCar(*front_car);
 				street.RemoveFrontCar();
-				// TODO Do we want to remove the car at this stage if it completed its journey?
 			}
 			// Remove the car from the traffic network if it has completed its journey.
-			else if (front_car->DidCompleteJourney())
+			if (front_car->DidCompleteJourney())
 			{
 				street.RemoveFrontCar();
 				// Accumulate points.
-				m_point_total += m_car_arrival_bonus;
+				m_point_total += (m_car_arrival_bonus + m_time_left);
+			}
+			// Advance any cars behind the front car on the same street.
+			// TODO Make sure cars are being updated correctly, that the references
+			// are correct, that the changes persist
+			std::deque<Car>* street_cars = street.GetCarQueue();
+			for (Car car : *street_cars)
+			{
+				car.Drive(street);
 			}
 		}
 		if (front_car && !did_find_cars)
@@ -190,7 +196,6 @@ void TrafficNetwork::Step()
 		m_time_left--;
 	}
 
-	m_is_network_empty = true;
 }
 
 uint32_t TrafficNetwork::GetTimeLimit()
