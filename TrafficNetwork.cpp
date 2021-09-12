@@ -7,6 +7,7 @@
 #include "TrafficNetwork.h"
 #include "Intersection.h"
 #include "TrafficLight.h"
+#include "StreetTravelTimeCalculator.h"
 
 #include "Common.h"
 
@@ -124,6 +125,63 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 		line_idx++;
 	}
 	std::cout << "Number of streets added to network: " << m_streets.size() << std::endl;
+
+	SetTrafficLights();
+
+	std::cout << "Set traffic light schedule" << std::endl;
+	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
+	{
+
+		for (auto street_name : intersection_iter->second.GetInStreetNames())
+		{
+			TrafficLight* p_traffic_light = intersection_iter->second.GetTrafficLightAtStreet(street_name);
+			std::cout << street_name << " -> " << intersection_iter->first << ":\t" << p_traffic_light->GetGreenLightDuration() << std::endl;
+		}
+	}
+}
+
+// Output a file describing any lights that are not evergreen.
+void TrafficNetwork::SetTrafficLights()
+{
+	TrafficScheduleCalculator* calculator = new StreetTravelTimeCalculator();
+	calculator->Calculate();
+	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
+	{
+		Intersection& intersection = intersection_iter->second;
+		uint32_t traffic_light_count = intersection.GetInStreetNames().size();
+		// If there is only one in street, set the light to evergreen.
+		if (traffic_light_count == 1)
+		{
+			std::string in_street_name = *(intersection.GetInStreetNames().begin());
+			TrafficLight* p_traffic_light = intersection.GetTrafficLightAtStreet(in_street_name);
+			if (p_traffic_light)
+			{
+				p_traffic_light->SetGreenLightDuration(m_world_time_limit);
+				p_traffic_light->SetIsEvergreen(true);
+			}
+		}
+		else
+		{
+			// TODO Potential to add different calculators or strategies based on a common interface
+			// For each intersection, set the traffic light time equal to the incoming road travel time 
+			// Otherwise, do something more sophisticated.
+			for (auto street_name : intersection.GetInStreetNames())
+			{
+				TrafficLight* p_traffic_light = intersection.GetTrafficLightAtStreet(street_name);
+				uint32_t traffic_light_time = m_world_time_limit;
+				if (m_street_map.find(street_name) != m_street_map.end())
+				{
+					traffic_light_time = m_street_map[street_name].GetTravelTimeSeconds();
+				}
+
+				if (p_traffic_light)
+				{
+					p_traffic_light->SetGreenLightDuration(traffic_light_time);
+				}
+			}
+		}
+	}
+	delete calculator;
 }
 
 /*
@@ -131,9 +189,8 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 */
 void TrafficNetwork::Step()
 {
-	// TODO Stop simulation early if all cars have arrived
-
 	bool did_find_cars = false;
+	bool did_front_car_drive = false;
 	// For each street, get the front car and advance it one step along its
 	// journey path
 	auto street_iter = m_street_map.begin();
@@ -145,34 +202,53 @@ void TrafficNetwork::Step()
 		// Get intersection at the end of this street.
 		Intersection& intersection = m_intersections[street.GetEndIntersectionID()];
 
-
-		// Obey traffic rules. Only move the car forward if the light is green.
-		if (front_car && intersection.IsLightGreenAtStreet(street.GetName()))
+		// Obey traffic rules.
+		// If car is in the middle of the street, Drive.
+		if (front_car && !front_car->IsAtEndOfStreet(street))
+		{
+			front_car->Drive(street);
+			did_front_car_drive = true;
+		}
+		// Only move the car forward if the light is green.
+		else if (front_car && intersection.IsLightGreenAtStreet(street.GetName()))
 		{
 			// Make sure the car's travel time is equal to the street's travel time
 			// before moving it to the next street.
 			std::string next_street = front_car->Drive(street);
+			did_front_car_drive = true;
+			// Update car to next street.
 			if (next_street != street_iter->first)
 			{
 				m_street_map[next_street].AddCar(*front_car);
 				street.RemoveFrontCar();
 			}
 			// Remove the car from the traffic network if it has completed its journey.
-			if (front_car->DidCompleteJourney())
+			else if (front_car->DidCompleteJourney())
 			{
 				street.RemoveFrontCar();
 				// Accumulate points.
 				m_point_total += (m_car_arrival_bonus + m_time_left);
 			}
+		}
+
+		if (did_front_car_drive)
+		{
 			// Advance any cars behind the front car on the same street.
-			// TODO Make sure cars are being updated correctly, that the references
-			// are correct, that the changes persist
+			// Drive all EXCEPT the front car.
 			std::deque<Car>* street_cars = street.GetCarQueue();
+			bool is_front_car_idx = true;
 			for (Car car : *street_cars)
 			{
+				if (is_front_car_idx)
+				{
+					is_front_car_idx = false;
+					continue;
+				}
 				car.Drive(street);
 			}
 		}
+
+		// NOTE This may be used later to end the simulation early.
 		if (front_car && !did_find_cars)
 		{
 			did_find_cars = true;
@@ -211,4 +287,9 @@ uint32_t TrafficNetwork::GetTimeLeft()
 std::map<std::string, Street> TrafficNetwork::GetStreetState()
 {
 	return m_street_map;
+}
+
+int TrafficNetwork::GetPoints()
+{
+	return m_point_total;
 }

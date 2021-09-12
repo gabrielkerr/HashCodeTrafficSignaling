@@ -33,6 +33,12 @@
     <ClCompile Include="Street.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StreetTravelTimeCalculator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TrafficScheduleCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TrafficLight.h">
@@ -56,8 +62,12 @@
     <ClInclude Include="Street.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StreetTravelTimeCalculator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Input\a.txt" />
+    <Text Include="Input\a_solution.txt" />
   </ItemGroup>
 </Project>

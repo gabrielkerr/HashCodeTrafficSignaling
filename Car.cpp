@@ -33,7 +33,6 @@ std::string Car::Drive(Street& street)
 			m_current_journey_index++;
 		}
 	}
-	m_is_at_end_of_street = (m_current_street_travel_time_seconds >= street.GetTravelTimeSeconds());
 
 	return m_journey_path[m_current_journey_index];
 }
@@ -41,4 +40,10 @@ std::string Car::Drive(Street& street)
 bool Car::DidCompleteJourney()
 {
 	return (m_current_journey_index >= m_journey_path.size() - 1) && (m_is_at_end_of_street);
+}
+
+bool Car::IsAtEndOfStreet(Street& street)
+{
+	m_is_at_end_of_street = (m_current_street_travel_time_seconds >= street.GetTravelTimeSeconds());
+	return m_is_at_end_of_street;
 }

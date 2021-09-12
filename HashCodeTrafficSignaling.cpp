@@ -21,6 +21,7 @@ int main()
     TrafficNetwork trafficNetwork;
     trafficNetwork.BuildTrafficNetwork("Input/a.txt");
 	cout << "Begining traffic simulation." << endl << endl;
+	// TODO Stop simulation early if all cars have arrived
     while (trafficNetwork.GetTimeLeft() > 0)
     {
 		trafficNetwork.Step();
@@ -31,7 +32,25 @@ int main()
 		}
 		cout << "----------" << endl;
     }
+
+	cout << "Total Points:\t" << trafficNetwork.GetPoints() << endl;
 }
+
+
+/*
+The first line must contain a single integer A (0 <= A <= I), the number of intersections
+for which you specify the schedule.
+
+Then, the submission file must describe the intersection schedules, in any order.
+Each schedule must be described by multiple lines:
+	- The first line containing a single integer i (0 <= i < I). The ID of the intersection.
+	- The second line containing a single integer E_i (0 < E_i). The number of
+	  incoming streets (of the intersection i) covered by this schedule.
+	- E_i lines describing the order and duration of green lights. Each of those lines
+	  must contain (separated by a single space):
+	  - the street name
+	  - an integer T (1 <= T <= D). How long each street will have a green light.
+*/
 
 /*
 General Questions:

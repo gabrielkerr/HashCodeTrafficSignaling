@@ -17,6 +17,16 @@ int Intersection::GetTrafficLightCount()
 	return m_traffic_light_map.size();
 }
 
+TrafficLight* Intersection::GetTrafficLightAtStreet(const std::string& street_name)
+{
+	if (m_traffic_light_map.find(street_name) != m_traffic_light_map.end())
+	{
+		return &(m_traffic_light_map[street_name]);
+	}
+
+	return nullptr;
+}
+
 bool Intersection::IsLightGreenAtStreet(const std::string& street_name)
 {
 	return m_traffic_light_map[street_name].IsGreen();
@@ -29,6 +39,7 @@ void Intersection::ToggleLightAtStreet(const std::string& street_name)
 	m_traffic_light_map[street_name].Toggle();
 }
 
+// TODO This should make sure only one light is green at a time in the intersection.
 void Intersection::Update()
 {
 	for (auto iter = m_traffic_light_map.begin(); iter != m_traffic_light_map.end(); ++iter)

@@ -1,16 +1,18 @@
 #include "TrafficLight.h"
 
 TrafficLight::TrafficLight()
-:m_green_light_duration(1)
-,m_is_green(true)
+:m_green_light_duration(0)
+,m_is_green(false)
 ,m_time_in_current_state(0)
+,m_is_evergreen(false)
 {
 
 }
 
 TrafficLight::TrafficLight(int duration)
-:m_is_green(true)
+:m_is_green(false)
 ,m_time_in_current_state(0)
+,m_is_evergreen(false)
 {
     m_green_light_duration = duration;
 }
@@ -20,9 +22,19 @@ int TrafficLight::GetGreenLightDuration()
     return m_green_light_duration;
 }
 
+void TrafficLight::SetGreenLightDuration(int green_light_duration)
+{
+    m_green_light_duration = green_light_duration;
+}
+
+void TrafficLight::SetIsEvergreen(bool is_evergreen)
+{
+    m_is_evergreen = is_evergreen;
+}
+
 bool TrafficLight::IsGreen()
 {
-    return m_is_green;
+    return m_is_evergreen || m_is_green;
 }
 
 void TrafficLight::Toggle()
@@ -33,7 +45,7 @@ void TrafficLight::Toggle()
 void TrafficLight::Update()
 {
     m_time_in_current_state++;
-    if (m_time_in_current_state >= m_green_light_duration)
+    if ((m_time_in_current_state >= m_green_light_duration) && (m_green_light_duration > 0))
     {
         Toggle();
         m_time_in_current_state = 0;

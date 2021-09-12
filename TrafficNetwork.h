@@ -23,8 +23,11 @@ private:
 public:
 	TrafficNetwork();
 	void BuildTrafficNetwork(const char* file_path);
+	// TODO
+	void SetTrafficLights();
 	void Step();
 	uint32_t GetTimeLimit();
 	uint32_t GetTimeLeft();
 	std::map<std::string, Street> GetStreetState();
+	int GetPoints();
 };

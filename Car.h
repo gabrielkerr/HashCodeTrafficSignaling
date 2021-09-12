@@ -25,5 +25,5 @@ public:
 
 	bool DidCompleteJourney();
 
-	inline bool IsAtEndOfStreet() { return m_is_at_end_of_street; }
+	bool IsAtEndOfStreet(Street& street); 
 };

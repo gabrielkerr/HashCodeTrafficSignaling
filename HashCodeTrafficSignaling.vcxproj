@@ -143,8 +143,10 @@
     <ClCompile Include="HashCodeTrafficSignaling.cpp" />
     <ClCompile Include="Intersection.cpp" />
     <ClCompile Include="Street.cpp" />
+    <ClCompile Include="StreetTravelTimeCalculator.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
     <ClCompile Include="TrafficNetwork.cpp" />
+    <ClCompile Include="TrafficScheduleCalculator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Car.h" />
@@ -152,11 +154,13 @@
     <ClInclude Include="HashCodeTrafficSignaling.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="Street.h" />
+    <ClInclude Include="StreetTravelTimeCalculator.h" />
     <ClInclude Include="TrafficLight.h" />
     <ClInclude Include="TrafficNetwork.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Input\a.txt" />
+    <Text Include="Input\a_solution.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,10 +21,14 @@ public:
 
 	int GetTrafficLightCount();
 
+	TrafficLight* GetTrafficLightAtStreet(const std::string& street_name);
+
 	bool IsLightGreenAtStreet(const std::string& street_name);
 
 	void ToggleLightAtStreet(const std::string& street_name);
 
-	// TODO Advance time on all traffic lights, toggling where appropriate.
+	inline std::set<std::string> GetInStreetNames() { return m_in_street_names; }
+
+	// Advance time on all traffic lights, toggling where appropriate.
 	void Update();
 };
