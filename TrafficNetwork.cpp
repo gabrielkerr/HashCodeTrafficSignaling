@@ -7,6 +7,7 @@
 #include "TrafficNetwork.h"
 #include "Intersection.h"
 #include "TrafficLight.h"
+#include "BasicTrafficScheduleCalculator.h"
 #include "StreetTravelTimeCalculator.h"
 
 #include "Common.h"
@@ -141,47 +142,20 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 }
 
 // Output a file describing any lights that are not evergreen.
+// TODO update signature to be void TrafficNetwork::SetTrafficLights(Calculator* calculator)
 void TrafficNetwork::SetTrafficLights()
 {
-	TrafficScheduleCalculator* calculator = new StreetTravelTimeCalculator();
-	calculator->Calculate();
-	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
-	{
-		Intersection& intersection = intersection_iter->second;
-		uint32_t traffic_light_count = intersection.GetInStreetNames().size();
-		// If there is only one in street, set the light to evergreen.
-		if (traffic_light_count == 1)
-		{
-			std::string in_street_name = *(intersection.GetInStreetNames().begin());
-			TrafficLight* p_traffic_light = intersection.GetTrafficLightAtStreet(in_street_name);
-			if (p_traffic_light)
-			{
-				p_traffic_light->SetGreenLightDuration(m_world_time_limit);
-				p_traffic_light->SetIsEvergreen(true);
-			}
-		}
-		else
-		{
-			// TODO Potential to add different calculators or strategies based on a common interface
-			// For each intersection, set the traffic light time equal to the incoming road travel time 
-			// Otherwise, do something more sophisticated.
-			for (auto street_name : intersection.GetInStreetNames())
-			{
-				TrafficLight* p_traffic_light = intersection.GetTrafficLightAtStreet(street_name);
-				uint32_t traffic_light_time = m_world_time_limit;
-				if (m_street_map.find(street_name) != m_street_map.end())
-				{
-					traffic_light_time = m_street_map[street_name].GetTravelTimeSeconds();
-				}
+	//TrafficScheduleCalculator* calculator = new StreetTravelTimeCalculator();
+	TrafficScheduleCalculator* calculator = new BasicTrafficScheduleCalculator();
+	// TODO It may be better to put this in the main() where Calculator(TrafficNetwork& network);
+	calculator->Calculate(m_intersections, m_street_map, m_world_time_limit);
 
-				if (p_traffic_light)
-				{
-					p_traffic_light->SetGreenLightDuration(traffic_light_time);
-				}
-			}
-		}
-	}
 	delete calculator;
+}
+
+// TODO
+void TrafficNetwork::SetTrafficLights(const std::string& solution_file_path)
+{
 }
 
 /*

@@ -23,8 +23,9 @@ private:
 public:
 	TrafficNetwork();
 	void BuildTrafficNetwork(const char* file_path);
-	// TODO
 	void SetTrafficLights();
+	// TODO Set traffic lights based on solution file
+	void SetTrafficLights(const std::string& solution_file_path);
 	void Step();
 	uint32_t GetTimeLimit();
 	uint32_t GetTimeLeft();
