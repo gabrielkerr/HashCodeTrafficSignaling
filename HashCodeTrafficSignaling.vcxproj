@@ -162,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Input\a.txt" />
+    <Text Include="Input\a_single_car.txt" />
     <Text Include="Input\a_solution.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

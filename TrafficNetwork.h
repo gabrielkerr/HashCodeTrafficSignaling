@@ -25,7 +25,7 @@ public:
 	void BuildTrafficNetwork(const char* file_path);
 	void SetTrafficLights();
 	// TODO Set traffic lights based on solution file
-	void SetTrafficLights(const std::string& solution_file_path);
+	void SetTrafficLights(const char* solution_file_path);
 	void Step();
 	uint32_t GetTimeLimit();
 	uint32_t GetTimeLeft();

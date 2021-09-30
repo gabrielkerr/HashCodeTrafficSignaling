@@ -73,7 +73,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Input\a.txt" />
-    <Text Include="Input\a_solution.txt" />
+    <Text Include="Input\a_single_car.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Input\a.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Input\a_solution.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

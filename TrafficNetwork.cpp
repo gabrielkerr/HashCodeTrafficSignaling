@@ -153,9 +153,11 @@ void TrafficNetwork::SetTrafficLights()
 	delete calculator;
 }
 
-// TODO
-void TrafficNetwork::SetTrafficLights(const std::string& solution_file_path)
+// TODO Set up traffic light schedule based on solution file input.
+void TrafficNetwork::SetTrafficLights(const char* solution_file_path)
 {
+	std::cout << "Setting traffic schedule from solution file " << solution_file_path << "..." << std::endl;
+	std::vector<std::string> lines = Common::ReadFile(solution_file_path);
 }
 
 /*

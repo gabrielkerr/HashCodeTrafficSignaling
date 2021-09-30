@@ -19,7 +19,7 @@ int main()
 {
     // Create the traffic network
     TrafficNetwork trafficNetwork;
-    trafficNetwork.BuildTrafficNetwork("Input/a.txt");
+    trafficNetwork.BuildTrafficNetwork("Input/a_single_car.txt");
 	cout << "Begining traffic simulation." << endl << endl;
 	// TODO Stop simulation early if all cars have arrived
     while (trafficNetwork.GetTimeLeft() > 0)
