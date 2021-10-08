@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 
+class TrafficScheduleCalculator;
 class Intersection;
 class Streets;
 
@@ -23,12 +24,14 @@ private:
 public:
 	TrafficNetwork();
 	void BuildTrafficNetwork(const char* file_path);
-	void SetTrafficLights();
-	// TODO Set traffic lights based on solution file
+	void SetTrafficLights(TrafficScheduleCalculator* calculator);
 	void SetTrafficLights(const char* solution_file_path);
 	void Step();
 	uint32_t GetTimeLimit();
 	uint32_t GetTimeLeft();
 	std::map<std::string, Street> GetStreetState();
 	int GetPoints();
+	void PrintSchedule();
+	// TODO
+	//void SaveScheduleToFile(const char* file_path);
 };

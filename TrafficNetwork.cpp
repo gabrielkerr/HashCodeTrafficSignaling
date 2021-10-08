@@ -7,8 +7,7 @@
 #include "TrafficNetwork.h"
 #include "Intersection.h"
 #include "TrafficLight.h"
-#include "BasicTrafficScheduleCalculator.h"
-#include "StreetTravelTimeCalculator.h"
+#include "TrafficScheduleCalculator.h"
 
 #include "Common.h"
 
@@ -126,38 +125,39 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 		line_idx++;
 	}
 	std::cout << "Number of streets added to network: " << m_streets.size() << std::endl;
-
-	SetTrafficLights();
-
-	std::cout << "Set traffic light schedule" << std::endl;
-	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
-	{
-
-		for (auto street_name : intersection_iter->second.GetInStreetNames())
-		{
-			TrafficLight* p_traffic_light = intersection_iter->second.GetTrafficLightAtStreet(street_name);
-			std::cout << street_name << " -> " << intersection_iter->first << ":\t" << p_traffic_light->GetGreenLightDuration() << std::endl;
-		}
-	}
 }
 
-// Output a file describing any lights that are not evergreen.
-// TODO update signature to be void TrafficNetwork::SetTrafficLights(Calculator* calculator)
-void TrafficNetwork::SetTrafficLights()
+void TrafficNetwork::SetTrafficLights(TrafficScheduleCalculator* calculator)
 {
-	//TrafficScheduleCalculator* calculator = new StreetTravelTimeCalculator();
-	TrafficScheduleCalculator* calculator = new BasicTrafficScheduleCalculator();
-	// TODO It may be better to put this in the main() where Calculator(TrafficNetwork& network);
 	calculator->Calculate(m_intersections, m_street_map, m_world_time_limit);
-
-	delete calculator;
 }
 
-// TODO Set up traffic light schedule based on solution file input.
+// Set up traffic light schedule based on solution file input.
 void TrafficNetwork::SetTrafficLights(const char* solution_file_path)
 {
 	std::cout << "Setting traffic schedule from solution file " << solution_file_path << "..." << std::endl;
+	uint32_t number_of_schedules;
 	std::vector<std::string> lines = Common::ReadFile(solution_file_path);
+
+	// TODO Set up a check here to validate input and throughout the file.
+	number_of_schedules = stoi(lines[0]);
+	
+	size_t line_idx = 1;
+	for (size_t schedule_idx(0); schedule_idx < number_of_schedules; ++schedule_idx)
+	{
+		size_t intersection_id = stoi(lines[line_idx++]);
+		// Get number of streets that the schedule specifies on the intersection.
+		size_t number_of_incoming_streets = stoi(lines[line_idx++]);
+		for (size_t street_idx(0); street_idx < number_of_incoming_streets; ++street_idx)
+		{
+			// Get the street name and green light length to set the traffic light for.
+			std::vector<std::string> schedule_tokens = Common::Split(lines[line_idx++], ' ');
+			std::string street_name = schedule_tokens[0];
+			uint32_t green_light_duration = stoi(schedule_tokens[1]);
+
+			m_intersections[intersection_id].GetTrafficLightAtStreet(street_name)->SetGreenLightDuration(green_light_duration);
+		}
+	}
 }
 
 /*
@@ -268,4 +268,19 @@ std::map<std::string, Street> TrafficNetwork::GetStreetState()
 int TrafficNetwork::GetPoints()
 {
 	return m_point_total;
+}
+
+void TrafficNetwork::PrintSchedule()
+{
+	std::cout << "Traffic light schedule" << std::endl;
+	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
+	{
+
+		for (auto street_name : intersection_iter->second.GetInStreetNames())
+		{
+			TrafficLight* p_traffic_light = intersection_iter->second.GetTrafficLightAtStreet(street_name);
+			std::cout << street_name << " -> " << intersection_iter->first << ":\t" << p_traffic_light->GetGreenLightDuration() << std::endl;
+		}
+	}
+
 }

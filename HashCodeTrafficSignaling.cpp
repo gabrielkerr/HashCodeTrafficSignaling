@@ -11,6 +11,8 @@
 #include "Intersection.h"
 #include "TrafficLight.h"
 #include "TrafficNetwork.h"
+#include "BasicTrafficScheduleCalculator.h"
+#include "StreetTravelTimeCalculator.h"
 #include "HashCodeTrafficSignaling.h"
 
 using namespace std;
@@ -19,7 +21,18 @@ int main()
 {
     // Create the traffic network
     TrafficNetwork trafficNetwork;
-    trafficNetwork.BuildTrafficNetwork("Input/a_single_car.txt");
+    trafficNetwork.BuildTrafficNetwork("Input/a.txt");
+	// Set traffic light schedule via solution file.
+	// TODO For this solution the score is 1001 (1000 + (6 - 5)), should be 1002 (1000 + (6 - 4)). 
+	// Might be time to write some tests! (Long overdue.)
+	trafficNetwork.SetTrafficLights("Input/a_solution.txt");
+
+	// Also possible to use calculators to set traffic light schedules.
+	//BasicTrafficScheduleCalculator calculator;
+	//StreetTravelTimeCalculator calculator;
+	//trafficNetwork.SetTrafficLights(&calculator);
+
+	trafficNetwork.PrintSchedule();
 	cout << "Begining traffic simulation." << endl << endl;
 	// TODO Stop simulation early if all cars have arrived
     while (trafficNetwork.GetTimeLeft() > 0)
