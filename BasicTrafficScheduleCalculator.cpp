@@ -11,7 +11,6 @@ void BasicTrafficScheduleCalculator::Calculate(std::map<uint32_t, Intersection>&
 	for (auto intersection_iter = intersections.begin(); intersection_iter != intersections.end(); ++intersection_iter)
 	{
 		Intersection& intersection = intersection_iter->second;
-		uint32_t traffic_light_count = intersection.GetInStreetNames().size();
 		for (auto street_name : intersection.GetInStreetNames())
 		{
 			TrafficLight* p_traffic_light = intersection.GetTrafficLightAtStreet(street_name);
