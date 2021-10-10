@@ -29,6 +29,7 @@ void RunInputExample()
     trafficNetwork.BuildTrafficNetwork("Input/a.txt");
 	cout << "Beginning traffic simulation." << endl << endl;
 	// TODO Stop simulation early if all cars have arrived
+	trafficNetwork.SetTrafficLights("Input/a_solution.txt");
     while (trafficNetwork.GetTimeLeft() > 0)
     {
 		trafficNetwork.Step();

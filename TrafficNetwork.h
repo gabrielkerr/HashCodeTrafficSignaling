@@ -19,7 +19,7 @@ private:
 	std::vector<Car> m_cars;
 	uint32_t m_point_total;
 	std::map<std::string, Street> m_street_map;
-	bool m_is_network_empty;
+	//bool m_is_network_empty;
 
 public:
 	TrafficNetwork();
@@ -32,6 +32,7 @@ public:
 	std::map<std::string, Street> GetStreetState();
 	int GetPoints();
 	void PrintSchedule();
+    Intersection* GetIntersectionById(uint32_t intersection_id);
 	// TODO
 	//void SaveScheduleToFile(const char* file_path);
 };

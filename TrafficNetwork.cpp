@@ -16,7 +16,7 @@ TrafficNetwork::TrafficNetwork()
 	,m_time_left(0)
 	,m_car_arrival_bonus(0)
 	,m_point_total(0)
-	,m_is_network_empty(false)
+	//,m_is_network_empty(false)
 {
 }
 
@@ -124,7 +124,7 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 		// Do work above this line
 		line_idx++;
 	}
-	std::cout << "Number of streets added to network: " << m_streets.size() << std::endl;
+	std::cout << "Number of streets added to network: " << m_street_map.size() << std::endl;
 }
 
 void TrafficNetwork::SetTrafficLights(TrafficScheduleCalculator* calculator)
@@ -141,7 +141,7 @@ void TrafficNetwork::SetTrafficLights(const char* solution_file_path)
 
 	// TODO Set up a check here to validate input and throughout the file.
 	number_of_schedules = stoi(lines[0]);
-	
+
 	size_t line_idx = 1;
 	for (size_t schedule_idx(0); schedule_idx < number_of_schedules; ++schedule_idx)
 	{
@@ -156,6 +156,11 @@ void TrafficNetwork::SetTrafficLights(const char* solution_file_path)
 			uint32_t green_light_duration = stoi(schedule_tokens[1]);
 
 			m_intersections[intersection_id].GetTrafficLightAtStreet(street_name)->SetGreenLightDuration(green_light_duration);
+            if ((street_idx == 0) && (!m_intersections[intersection_id].GetTrafficLightAtStreet(street_name)->IsGreen()))
+            {
+				// TODO Check if the light should be green at the start.
+                //m_intersections[intersection_id].GetTrafficLightAtStreet(street_name)->Toggle();
+            }
 		}
 	}
 }
@@ -268,6 +273,14 @@ std::map<std::string, Street> TrafficNetwork::GetStreetState()
 int TrafficNetwork::GetPoints()
 {
 	return m_point_total;
+}
+
+Intersection* TrafficNetwork::GetIntersectionById(uint32_t intersection_id)
+{
+    if (m_intersections.find(intersection_id) == m_intersections.end())
+        return nullptr;
+
+    return &(m_intersections[intersection_id]); 
 }
 
 void TrafficNetwork::PrintSchedule()
