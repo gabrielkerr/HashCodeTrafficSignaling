@@ -21,3 +21,7 @@ Street.o: ../Street.cpp
 
 TrafficLight.o: ../TrafficLight.cpp
 	$(CC) $(CFLAGS) -c ../TrafficLight.cpp
+
+clean:
+	$(RM) testProgram *.o
+	rm -rf *.dSYM
