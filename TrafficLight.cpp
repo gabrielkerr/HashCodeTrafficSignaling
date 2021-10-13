@@ -27,6 +27,12 @@ void TrafficLight::SetGreenLightDuration(int green_light_duration)
     m_green_light_duration = green_light_duration;
 }
 
+void TrafficLight::SetGreen(bool is_green)
+{
+    m_is_green = is_green;
+}
+
+
 void TrafficLight::SetIsEvergreen(bool is_evergreen)
 {
     m_is_evergreen = is_evergreen;

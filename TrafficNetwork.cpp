@@ -156,11 +156,7 @@ void TrafficNetwork::SetTrafficLights(const char* solution_file_path)
 			uint32_t green_light_duration = stoi(schedule_tokens[1]);
 
 			m_intersections[intersection_id].GetTrafficLightAtStreet(street_name)->SetGreenLightDuration(green_light_duration);
-            if ((street_idx == 0) && (!m_intersections[intersection_id].GetTrafficLightAtStreet(street_name)->IsGreen()))
-            {
-				// TODO Check if the light should be green at the start.
-                //m_intersections[intersection_id].GetTrafficLightAtStreet(street_name)->Toggle();
-            }
+			m_intersections[intersection_id].AddLightToSchedule(street_name);
 		}
 	}
 }

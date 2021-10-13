@@ -57,7 +57,6 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     tn.SetTrafficLights("../Input/a_solution.txt");
 
     // Validate intersection start states
-    /*
     Intersection* p_intersection_0 = tn.GetIntersectionById(0);
     ASSERT_FALSE(p_intersection_0 == nullptr);
     ASSERT_TRUE(p_intersection_0->IsLightGreenAtStreet("rue-de-londres"));
@@ -66,8 +65,8 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     ASSERT_FALSE(p_intersection_1 == nullptr);
     ASSERT_TRUE(p_intersection_1->IsLightGreenAtStreet("rue-d-athenes"));
     ASSERT_FALSE(p_intersection_1->IsLightGreenAtStreet("rue-d-amsterdam"));
-    */
 
+    /*
     while (tn.GetTimeLeft() > 0)
     {
 		tn.Step();
@@ -75,6 +74,7 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
 
     uint32_t expected_point_total = 1002;
 	ASSERT_EQ(expected_point_total, tn.GetPoints());
+    */
 }
 
 int main(int argc, char **argv) {

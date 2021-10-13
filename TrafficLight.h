@@ -19,6 +19,7 @@ public:
 	int GetGreenLightDuration();
 	void SetGreenLightDuration(int green_light_duration);
 	void SetIsEvergreen(bool is_evergreen);
+	void SetGreen(bool is_green);
 	bool IsGreen();
 	void Toggle();
 	// Advance time step on traffic light and toggle if needed.

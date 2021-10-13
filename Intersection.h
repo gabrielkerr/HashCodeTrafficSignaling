@@ -35,6 +35,8 @@ public:
 	bool IsLightGreenAtStreet(const std::string& street_name);
 
 	void ToggleLightAtStreet(const std::string& street_name);
+	
+	void AddLightToSchedule(const std::string& street_name);
 
 	inline std::set<std::string> GetInStreetNames() { return m_in_street_names; }
 

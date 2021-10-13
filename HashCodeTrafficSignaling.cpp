@@ -32,6 +32,7 @@ void RunInputExample()
 	trafficNetwork.SetTrafficLights("Input/a_solution.txt");
     while (trafficNetwork.GetTimeLeft() > 0)
     {
+		std::cout << "STEP!" << std::endl;
 		trafficNetwork.Step();
 		map<string, Street> street_map = trafficNetwork.GetStreetState();
 		for (auto street_map_iter = street_map.begin(); street_map_iter != street_map.end(); ++street_map_iter)
