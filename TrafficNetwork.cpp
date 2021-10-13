@@ -191,11 +191,14 @@ void TrafficNetwork::Step()
 		{
 			// Make sure the car's travel time is equal to the street's travel time
 			// before moving it to the next street.
+			std::cout << "Car at end of " << street.GetName() << " is driving on!" << std::endl;
 			std::string next_street = front_car->Drive(street);
 			did_front_car_drive = true;
 			// Update car to next street.
+			std::cout << "Checking to add to " << next_street << "..." << std::endl;
 			if (next_street != street_iter->first)
 			{
+				std::cout << "ADDED!" << std::endl;
 				m_street_map[next_street].AddCar(*front_car);
 				street.RemoveFrontCar();
 			}
