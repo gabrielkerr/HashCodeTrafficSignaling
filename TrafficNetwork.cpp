@@ -170,8 +170,9 @@ void TrafficNetwork::Step()
 	bool did_front_car_drive = false;
 	// For each street, get the front car and advance it one step along its
 	// journey path
-	auto street_iter = m_street_map.begin();
-	for (street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
+	// Update all intersection lights
+	UpdateIntersections();
+	for (auto street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
 	{
 		Street& street = street_iter->second;
 		Car* front_car = street.GetFrontCar();
@@ -236,16 +237,11 @@ void TrafficNetwork::Step()
 	}
 
 	// Update all streets.
-	for (street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
+	for (auto street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
 	{
 		street_iter->second.Update();
 	}
 
-	// Update all intersection lights
-	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
-	{
-		intersection_iter->second.Update();
-	}
 
 	if (m_time_left > 0)
 	{
@@ -296,3 +292,12 @@ void TrafficNetwork::PrintSchedule()
 	}
 
 }
+
+void TrafficNetwork::UpdateIntersections()
+{
+	for (auto intersection_iter = m_intersections.begin(); intersection_iter != m_intersections.end(); ++intersection_iter)
+	{
+		intersection_iter->second.Update();
+	}
+}
+

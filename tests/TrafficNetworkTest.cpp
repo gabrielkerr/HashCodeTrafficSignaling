@@ -59,7 +59,7 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     // Calculate traffic schedule from input solution file.
     tn.SetTrafficLights("../Input/a_solution.txt");
 
-    // Validate intersection start states
+    // Validate intersection start states (t = 0)
     Intersection* p_intersection_0 = tn.GetIntersectionById(0);
     ASSERT_FALSE(p_intersection_0 == nullptr);
     ASSERT_TRUE(p_intersection_0->IsLightGreenAtStreet("rue-de-londres"));
@@ -69,16 +69,38 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     ASSERT_TRUE(p_intersection_1->IsLightGreenAtStreet("rue-d-athenes"));
     ASSERT_FALSE(p_intersection_1->IsLightGreenAtStreet("rue-d-amsterdam"));
 
-    // TODO Validate first time step.
+    // Validate first time step. (t = 1)
     tn.Step();
     network_street_state = tn.GetStreetState(); // Get the new street state!
     EXPECT_EQ(0, network_street_state["rue-de-londres"].GetCarQueue()->size());
     ASSERT_EQ(1, network_street_state["rue-d-amsterdam"].GetCarQueue()->size());
-    ASSERT_EQ(network_street_state["rue-d-amsterdam"].GetFrontCar()->GetJourneyPath(), expected_path_1);
+    p_car_1 = network_street_state["rue-d-amsterdam"].GetFrontCar();
+    ASSERT_EQ(p_car_1->GetJourneyPath(), expected_path_1);
+    ASSERT_TRUE(p_car_1->IsAtEndOfStreet(network_street_state["rue-d-amsterdam"]));
+    ASSERT_FALSE(tn.GetIntersectionById(1)->GetTrafficLightAtStreet("rue-d-amsterdam")->IsGreen());
+
 
     EXPECT_EQ(0, network_street_state["rue-d-athenes"].GetCarQueue()->size());
     ASSERT_EQ(1, network_street_state["rue-de-moscou"].GetCarQueue()->size());
     ASSERT_EQ(network_street_state["rue-de-moscou"].GetFrontCar()->GetJourneyPath(), expected_path_2);
+    p_car_2 = network_street_state["rue-de-moscou"].GetFrontCar();
+    ASSERT_FALSE(p_car_2 == nullptr);
+    ASSERT_FALSE(p_car_2->IsAtEndOfStreet(network_street_state["rue-de-moscou"]));
+
+    // Validate (t = 2)
+    tn.Step();
+    network_street_state = tn.GetStreetState(); // Get the new street state!
+    ASSERT_TRUE(tn.GetIntersectionById(1)->GetTrafficLightAtStreet("rue-d-amsterdam")->IsGreen());
+    ASSERT_TRUE(network_street_state["rue-d-amsterdam"].IsEmpty());
+    ASSERT_EQ(2, network_street_state["rue-de-moscou"].GetCarQueue()->size());
+    Car car_1 = network_street_state["rue-de-moscou"].GetCarQueue()->back();
+    ASSERT_EQ(car_1.GetJourneyPath(), expected_path_1);
+
+    ASSERT_EQ(network_street_state["rue-de-moscou"].GetFrontCar()->GetJourneyPath(), expected_path_2);
+    p_car_2 = network_street_state["rue-de-moscou"].GetFrontCar();
+    ASSERT_FALSE(p_car_2 == nullptr);
+    ASSERT_FALSE(p_car_2->IsAtEndOfStreet(network_street_state["rue-de-moscou"]));
+
 
     /*
     while (tn.GetTimeLeft() > 0)

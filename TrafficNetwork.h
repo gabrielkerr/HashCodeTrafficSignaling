@@ -20,6 +20,8 @@ private:
 	uint32_t m_point_total;
 	std::map<std::string, Street> m_street_map;
 	//bool m_is_network_empty;
+	
+	void UpdateIntersections();
 
 public:
 	TrafficNetwork();

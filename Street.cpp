@@ -23,6 +23,7 @@ Street::Street(uint32_t start_intersection_id,
 
 void Street::AddCar(Car car)
 {
+	car.SetCurrentTravelTime(1);
 	m_temporary_car_queue.push_back(car);
 }
 
