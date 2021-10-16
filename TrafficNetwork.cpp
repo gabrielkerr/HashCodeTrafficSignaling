@@ -166,6 +166,12 @@ void TrafficNetwork::SetTrafficLights(const char* solution_file_path)
 */
 void TrafficNetwork::Step()
 {
+	std::cout << "STEP!" << std::endl;
+	if (m_time_left > 0)
+	{
+		m_time_left--;
+	}
+
 	bool did_find_cars = false;
 	bool did_front_car_drive = false;
 	// For each street, get the front car and advance it one step along its
@@ -192,24 +198,15 @@ void TrafficNetwork::Step()
 		{
 			// Make sure the car's travel time is equal to the street's travel time
 			// before moving it to the next street.
-			std::cout << "Car at end of " << street.GetName() << " is driving on!" << std::endl;
 			std::string next_street = front_car->Drive(street);
 			did_front_car_drive = true;
 			// Update car to next street.
-			std::cout << "Checking to add to " << next_street << "..." << std::endl;
 			if (next_street != street_iter->first)
 			{
-				std::cout << "ADDED!" << std::endl;
 				m_street_map[next_street].AddCar(*front_car);
 				street.RemoveFrontCar();
 			}
-			// Remove the car from the traffic network if it has completed its journey.
-			else if (front_car->DidCompleteJourney())
-			{
-				street.RemoveFrontCar();
-				// Accumulate points.
-				m_point_total += (m_car_arrival_bonus + m_time_left);
-			}
+
 		}
 
 		if (did_front_car_drive)
@@ -218,7 +215,7 @@ void TrafficNetwork::Step()
 			// Drive all EXCEPT the front car.
 			std::deque<Car>* street_cars = street.GetCarQueue();
 			bool is_front_car_idx = true;
-			for (Car car : *street_cars)
+			for (Car& car : *street_cars)
 			{
 				if (is_front_car_idx)
 				{
@@ -240,14 +237,15 @@ void TrafficNetwork::Step()
 	for (auto street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
 	{
 		street_iter->second.Update();
+		// Remove the car from the traffic network if it has completed its journey. TODO This condition needs clean up and the Car class should be updated.
+		if (street_iter->second.GetFrontCar() && street_iter->second.GetFrontCar()->DidCompleteJourney() && street_iter->second.GetFrontCar()->IsAtEndOfStreet(street_iter->second))
+		{
+			street_iter->second.RemoveFrontCar();
+			// Accumulate points.
+			m_point_total += (m_car_arrival_bonus + m_time_left);
+		}
 	}
-
-
-	if (m_time_left > 0)
-	{
-		m_time_left--;
-	}
-
+	std::cout << "---------" << std::endl;
 }
 
 uint32_t TrafficNetwork::GetTimeLimit()
@@ -275,7 +273,7 @@ Intersection* TrafficNetwork::GetIntersectionById(uint32_t intersection_id)
     if (m_intersections.find(intersection_id) == m_intersections.end())
         return nullptr;
 
-    return &(m_intersections[intersection_id]); 
+    return &(m_intersections[intersection_id]);
 }
 
 void TrafficNetwork::PrintSchedule()

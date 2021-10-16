@@ -43,13 +43,13 @@ void Intersection::AddLightToSchedule(const std::string& street_name)
 {
 	// Set the street to the lowest priority in the street order.
 	m_street_priority_vector.push_back(street_name);
-	
+
 	// Set light to green if it's the first one in the order.
 	if (m_street_priority_vector.size() == 1)
 	{
 		m_traffic_light_map[street_name].SetGreen(true);
 	}
-	else 
+	else
 	{
 		m_traffic_light_map[street_name].SetGreen(false);
 	}

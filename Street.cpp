@@ -10,8 +10,8 @@ Street::Street()
 {
 }
 
-Street::Street(uint32_t start_intersection_id, 
-	           uint32_t end_intersection_id, 
+Street::Street(uint32_t start_intersection_id,
+	           uint32_t end_intersection_id,
 	           uint32_t travel_time_seconds,
 	           std::string name)
 :m_travel_time_seconds(travel_time_seconds)
@@ -39,7 +39,7 @@ bool Street::IsEmpty()
 
 Car* Street::GetFrontCar()
 {
-	Car* p_front_car = nullptr; 
+	Car* p_front_car = nullptr;
 	if (!m_car_queue.empty())
 	{
 		p_front_car = &(m_car_queue.front());

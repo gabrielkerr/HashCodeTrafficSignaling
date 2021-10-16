@@ -6,7 +6,6 @@ Car::Car()
 ,m_current_journey_index(0)
 ,m_is_at_end_of_street(false)
 {
-
 }
 
 std::vector<std::string> Car::GetJourneyPath()

@@ -101,16 +101,31 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     ASSERT_FALSE(p_car_2 == nullptr);
     ASSERT_FALSE(p_car_2->IsAtEndOfStreet(network_street_state["rue-de-moscou"]));
 
+    // Validate (t = 3)
+    tn.Step();
+    network_street_state = tn.GetStreetState(); // TODO Maybe this should be a map to pointers.
+    ASSERT_EQ(2, network_street_state["rue-de-moscou"].GetCarQueue()->size());
+    ASSERT_EQ(network_street_state["rue-de-moscou"].GetFrontCar()->GetJourneyPath(), expected_path_2);
 
-    /*
-    while (tn.GetTimeLeft() > 0)
-    {
-		tn.Step();
-    }
+    // Validate (t = 4)
+    tn.Step();
+    network_street_state = tn.GetStreetState(); // Get the new street state!
 
+    // Car 2 should have reached its destination and been removed from the sim.
     uint32_t expected_point_total = 1002;
 	ASSERT_EQ(expected_point_total, tn.GetPoints());
-    */
+
+    // Validate (t = 5)
+    tn.Step();
+    network_street_state = tn.GetStreetState(); // Get the new street state!
+    ASSERT_EQ(0, network_street_state["rue-de-rome"].GetCarQueue()->size());
+
+    // Validate (t = 6)
+    tn.Step();
+    network_street_state = tn.GetStreetState(); // Get the new street state!
+    ASSERT_EQ(1, network_street_state["rue-de-rome"].GetCarQueue()->size());
+
+	ASSERT_EQ(expected_point_total, tn.GetPoints());
 }
 
 int main(int argc, char **argv) {
