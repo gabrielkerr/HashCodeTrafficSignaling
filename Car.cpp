@@ -21,7 +21,7 @@ void Car::SetJourneyPath(std::vector<std::string> journey_path)
 	}
 }
 
-std::string Car::Drive(Street& street)
+std::string Car::Drive(const Street& street)
 {
 	m_current_street_travel_time_seconds++;
 	// Update journey index.
@@ -41,7 +41,7 @@ bool Car::DidCompleteJourney()
 	return (m_current_journey_index >= m_journey_path.size() - 1) && (m_is_at_end_of_street);
 }
 
-bool Car::IsAtEndOfStreet(Street& street)
+bool Car::IsAtEndOfStreet(const Street& street)
 {
 	m_is_at_end_of_street = (m_current_street_travel_time_seconds >= street.GetTravelTimeSeconds());
 	return m_is_at_end_of_street;

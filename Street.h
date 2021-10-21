@@ -17,8 +17,8 @@ private:
 
 public:
 	Street();
-	Street(uint32_t start_intersection_id, 
-		   uint32_t end_intersection_id, 
+	Street(uint32_t start_intersection_id,
+		   uint32_t end_intersection_id,
 		   uint32_t travel_time_seconds,
 		   std::string name);
 	void AddCar(Car car);
@@ -26,7 +26,7 @@ public:
 	bool IsEmpty();
 	Car* GetFrontCar();
 	void RemoveFrontCar();
-	uint32_t GetTravelTimeSeconds();
+	uint32_t GetTravelTimeSeconds() const;
 	uint32_t GetStartIntersectionID();
 	uint32_t GetEndIntersectionID();
 	void Update();

@@ -29,7 +29,7 @@ void Street::AddCar(Car car)
 
 std::deque<Car>* Street::GetCarQueue()
 {
-	return &m_car_queue;
+	return &(m_car_queue);
 }
 
 bool Street::IsEmpty()
@@ -52,7 +52,7 @@ void Street::RemoveFrontCar()
 	m_car_queue.pop_front();
 }
 
-uint32_t Street::GetTravelTimeSeconds()
+uint32_t Street::GetTravelTimeSeconds() const
 {
 	return m_travel_time_seconds;
 }

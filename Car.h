@@ -21,10 +21,10 @@ public:
 
 	inline void SetCurrentTravelTime(uint32_t travel_time) { m_current_street_travel_time_seconds = travel_time; }
 	inline uint32_t GetCurrentTravelTime() { return m_current_street_travel_time_seconds; }
-	
-	std::string Drive(Street& street);
+
+	std::string Drive(const Street& street);
 
 	bool DidCompleteJourney();
 
-	bool IsAtEndOfStreet(Street& street); 
+	bool IsAtEndOfStreet(const Street& street);
 };

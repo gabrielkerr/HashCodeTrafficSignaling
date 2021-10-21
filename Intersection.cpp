@@ -14,7 +14,7 @@ void Intersection::AddInStreet(std::string& street_name)
 	m_traffic_light_map[street_name] = traffic_light;
 }
 
-int Intersection::GetTrafficLightCount()
+int Intersection::GetTrafficLightCount() const
 {
 	return m_traffic_light_map.size();
 }
