@@ -108,14 +108,14 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 			{
 				car_path.push_back(car_path_tokens[path_token_idx]);
 			}
-			Car car;
-			car.SetJourneyPath(car_path);
-			m_cars.push_back(car);
+			// TODO Make sure to clean up pointers or else use smart pointers.
+			Car* car = new Car();
+			car->SetJourneyPath(car_path);
 
 			// Add cars to streets
 			Street &starting_street = m_street_map[car_path[0]];
 			// Drive the car right up to the intersection at the end of the street.
-			car.SetCurrentTravelTime(starting_street.GetTravelTimeSeconds());
+			car->SetCurrentTravelTime(starting_street.GetTravelTimeSeconds());
 			starting_street.AddCar(car);
 			starting_street.Update();
 
@@ -203,7 +203,7 @@ void TrafficNetwork::Step()
 			// Update car to next street.
 			if (next_street != street_iter->first)
 			{
-				m_street_map[next_street].AddCar(*front_car);
+				m_street_map[next_street].AddCar(front_car);
 				street.RemoveFrontCar();
 			}
 
@@ -213,16 +213,16 @@ void TrafficNetwork::Step()
 		{
 			// Advance any cars behind the front car on the same street.
 			// Drive all EXCEPT the front car.
-			std::deque<Car>* street_cars = street.GetCarQueue();
+			std::deque<Car*> street_cars = street.GetCarQueue();
 			bool is_front_car_idx = true;
-			for (Car& car : *street_cars)
+			for (Car* car : street_cars)
 			{
 				if (is_front_car_idx)
 				{
 					is_front_car_idx = false;
 					continue;
 				}
-				car.Drive(street);
+				car->Drive(street);
 			}
 		}
 

@@ -21,15 +21,15 @@ Street::Street(uint32_t start_intersection_id,
 {
 }
 
-void Street::AddCar(Car car)
+void Street::AddCar(Car* car)
 {
-	car.SetCurrentTravelTime(1);
+	car->SetCurrentTravelTime(1);
 	m_temporary_car_queue.push_back(car);
 }
 
-std::deque<Car>* Street::GetCarQueue()
+std::deque<Car*> Street::GetCarQueue()
 {
-	return &(m_car_queue);
+	return m_car_queue;
 }
 
 bool Street::IsEmpty()
@@ -42,7 +42,7 @@ Car* Street::GetFrontCar()
 	Car* p_front_car = nullptr;
 	if (!m_car_queue.empty())
 	{
-		p_front_car = &(m_car_queue.front());
+		p_front_car = m_car_queue.front();
 	}
 	return p_front_car;
 }

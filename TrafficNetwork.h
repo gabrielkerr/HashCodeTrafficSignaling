@@ -16,7 +16,6 @@ private:
 	uint32_t m_car_arrival_bonus;
 	std::map<uint32_t, Intersection> m_intersections;
 	std::vector<Street> m_streets;
-	std::vector<Car> m_cars;
 	uint32_t m_point_total;
 	std::map<std::string, Street> m_street_map;
 	//bool m_is_network_empty;
