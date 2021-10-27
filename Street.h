@@ -21,6 +21,7 @@ public:
 		   uint32_t end_intersection_id,
 		   uint32_t travel_time_seconds,
 		   std::string name);
+	~Street();
 	void AddCar(Car* car);
 	std::deque<Car*> GetCarQueue();
 	bool IsEmpty();

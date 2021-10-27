@@ -8,7 +8,7 @@
 /*
 * Takes traffic network intersection map and updates all the traffic lights.
 */
-void StreetTravelTimeCalculator::Calculate(std::map<uint32_t, Intersection>& intersections, std::map<std::string, Street>& street_map, const uint32_t max_time_seconds)
+void StreetTravelTimeCalculator::Calculate(std::map<uint32_t, Intersection>& intersections, std::map<std::string, Street*>& street_map, const uint32_t max_time_seconds)
 {
 	std::cout << "Calculating!" << std::endl;
 	for (auto intersection_iter = intersections.begin(); intersection_iter != intersections.end(); ++intersection_iter)
@@ -36,7 +36,7 @@ void StreetTravelTimeCalculator::Calculate(std::map<uint32_t, Intersection>& int
 				uint32_t traffic_light_time = max_time_seconds;
 				if (street_map.find(street_name) != street_map.end())
 				{
-					traffic_light_time = street_map[street_name].GetTravelTimeSeconds();
+					traffic_light_time = street_map[street_name]->GetTravelTimeSeconds();
 				}
 
 				if (p_traffic_light)

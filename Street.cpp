@@ -21,6 +21,15 @@ Street::Street(uint32_t start_intersection_id,
 {
 }
 
+Street::~Street()
+{
+	for (Car* p_car : m_car_queue)
+	{
+		delete p_car;
+		p_car = 0;
+	}
+}
+
 void Street::AddCar(Car* car)
 {
 	car->SetCurrentTravelTime(1);

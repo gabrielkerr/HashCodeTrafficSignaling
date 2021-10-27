@@ -20,6 +20,15 @@ TrafficNetwork::TrafficNetwork()
 {
 }
 
+TrafficNetwork::~TrafficNetwork()
+{
+	for (auto street_iter : m_street_map)
+	{
+		delete (street_iter.second);
+		street_iter.second = 0;
+	}
+}
+
 /*
 * Creates a TrafficNetwork from a text file with the format described here:
 * https://storage.googleapis.com/coding-competitions.appspot.com/HC/2021/hashcode_2021_online_qualification_round.pdf
@@ -87,13 +96,13 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 			E = atoi(street_info_tokens[1].c_str());
 			std::string street_name = street_info_tokens[2];
 			L = atoi(street_info_tokens[3].c_str());
-			Street street(B, E, L, street_name);
+			Street* p_street = new Street(B, E, L, street_name);
 
 			// Add street to the network
-			m_street_map.insert(std::pair<std::string, Street>(street_name, street));
+			m_street_map.insert(std::pair<std::string, Street*>(street_name, p_street));
 
 			// Update intersections with appropriate in-street
-			m_intersections[street.GetEndIntersectionID()].AddInStreet(street_name);
+			m_intersections[p_street->GetEndIntersectionID()].AddInStreet(street_name);
 		}
 		// The next V lines describe the paths of each car
 		// Integer P, number of streets the car wants to travel
@@ -108,17 +117,16 @@ void TrafficNetwork::BuildTrafficNetwork(const char* file_path)
 			{
 				car_path.push_back(car_path_tokens[path_token_idx]);
 			}
-			// TODO Make sure to clean up pointers or else use smart pointers.
+			// Make sure to clean up pointers or else use smart pointers.
 			Car* car = new Car();
 			car->SetJourneyPath(car_path);
 
 			// Add cars to streets
-			Street &starting_street = m_street_map[car_path[0]];
+			Street* p_starting_street = m_street_map[car_path[0]];
 			// Drive the car right up to the intersection at the end of the street.
-			car->SetCurrentTravelTime(starting_street.GetTravelTimeSeconds());
-			starting_street.AddCar(car);
-			starting_street.Update();
-
+			car->SetCurrentTravelTime(p_starting_street->GetTravelTimeSeconds());
+			p_starting_street->AddCar(car);
+			p_starting_street->Update();
 		}
 
 		// Do work above this line
@@ -180,31 +188,31 @@ void TrafficNetwork::Step()
 	UpdateIntersections();
 	for (auto street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
 	{
-		Street& street = street_iter->second;
-		Car* front_car = street.GetFrontCar();
+		Street* p_street = street_iter->second;
+		Car* front_car = p_street->GetFrontCar();
 
 		// Get intersection at the end of this street.
-		Intersection& intersection = m_intersections[street.GetEndIntersectionID()];
+		Intersection& intersection = m_intersections[p_street->GetEndIntersectionID()];
 
 		// Obey traffic rules.
 		// If car is in the middle of the street, Drive.
-		if (front_car && !front_car->IsAtEndOfStreet(street))
+		if (front_car && !front_car->IsAtEndOfStreet(*p_street))
 		{
-			front_car->Drive(street);
+			front_car->Drive(*p_street);
 			did_front_car_drive = true;
 		}
 		// Only move the car forward if the light is green.
-		else if (front_car && intersection.IsLightGreenAtStreet(street.GetName()))
+		else if (front_car && intersection.IsLightGreenAtStreet(p_street->GetName()))
 		{
 			// Make sure the car's travel time is equal to the street's travel time
 			// before moving it to the next street.
-			std::string next_street = front_car->Drive(street);
+			std::string next_street = front_car->Drive(*p_street);
 			did_front_car_drive = true;
 			// Update car to next street.
 			if (next_street != street_iter->first)
 			{
-				m_street_map[next_street].AddCar(front_car);
-				street.RemoveFrontCar();
+				m_street_map[next_street]->AddCar(front_car);
+				p_street->RemoveFrontCar();
 			}
 
 		}
@@ -213,7 +221,7 @@ void TrafficNetwork::Step()
 		{
 			// Advance any cars behind the front car on the same street.
 			// Drive all EXCEPT the front car.
-			std::deque<Car*> street_cars = street.GetCarQueue();
+			std::deque<Car*> street_cars = p_street->GetCarQueue();
 			bool is_front_car_idx = true;
 			for (Car* car : street_cars)
 			{
@@ -222,7 +230,7 @@ void TrafficNetwork::Step()
 					is_front_car_idx = false;
 					continue;
 				}
-				car->Drive(street);
+				car->Drive(*p_street);
 			}
 		}
 
@@ -236,11 +244,12 @@ void TrafficNetwork::Step()
 	// Update all streets.
 	for (auto street_iter = m_street_map.begin(); street_iter != m_street_map.end(); ++street_iter)
 	{
-		street_iter->second.Update();
+		Street* p_street = street_iter->second;
+		p_street->Update();
 		// Remove the car from the traffic network if it has completed its journey. TODO This condition needs clean up and the Car class should be updated.
-		if (street_iter->second.GetFrontCar() && street_iter->second.GetFrontCar()->DidCompleteJourney() && street_iter->second.GetFrontCar()->IsAtEndOfStreet(street_iter->second))
+		if (p_street->GetFrontCar() && p_street->GetFrontCar()->DidCompleteJourney() && p_street->GetFrontCar()->IsAtEndOfStreet(*p_street))
 		{
-			street_iter->second.RemoveFrontCar();
+			p_street->RemoveFrontCar();
 			// Accumulate points.
 			m_point_total += (m_car_arrival_bonus + m_time_left);
 		}
@@ -258,7 +267,7 @@ uint32_t TrafficNetwork::GetTimeLeft()
 	return m_time_left;
 }
 
-std::map<std::string, Street> TrafficNetwork::GetStreetState()
+std::map<std::string, Street*> TrafficNetwork::GetStreetState()
 {
 	return m_street_map;
 }
