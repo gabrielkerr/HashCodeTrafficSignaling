@@ -33,28 +33,28 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     ASSERT_EQ(simulation_time_limit, tn.GetTimeLeft());
 
     // Check initial street state.
-    std::map<std::string, Street> network_street_state = tn.GetStreetState();
+    auto network_street_state = tn.GetStreetState();
     ASSERT_EQ(number_of_streets, network_street_state.size());
 
     // Check that rue-de-londres has one car at the end of the street.
     ASSERT_TRUE(network_street_state.find("rue-de-londres") != network_street_state.end());
-    ASSERT_EQ(1, network_street_state["rue-de-londres"].GetCarQueue()->size());
-    ASSERT_TRUE(network_street_state["rue-de-londres"].GetFrontCar()->IsAtEndOfStreet(network_street_state["rue-de-londres"]));
+    ASSERT_EQ(1, network_street_state["rue-de-londres"]->GetCarQueue().size());
+    ASSERT_TRUE(network_street_state["rue-de-londres"]->GetFrontCar()->IsAtEndOfStreet(*network_street_state["rue-de-londres"]));
     // Check car 1 assigned path
-    Car* p_car_1 = network_street_state["rue-de-londres"].GetFrontCar();
+    Car* p_car_1 = network_street_state["rue-de-londres"]->GetFrontCar();
     std::vector<std::string> expected_path_1 = { "rue-de-londres", "rue-d-amsterdam", "rue-de-moscou", "rue-de-rome" };
     ASSERT_EQ(expected_path_1, p_car_1->GetJourneyPath());
-    ASSERT_TRUE(p_car_1->IsAtEndOfStreet(network_street_state["rue-de-londres"]));
+    ASSERT_TRUE(p_car_1->IsAtEndOfStreet(*network_street_state["rue-de-londres"]));
 
     // Check that rue-d-athenes has one car at the end of the street.
     ASSERT_TRUE(network_street_state.find("rue-d-athenes") != network_street_state.end());
-    ASSERT_EQ(1, network_street_state["rue-d-athenes"].GetCarQueue()->size());
-    ASSERT_TRUE(network_street_state["rue-d-athenes"].GetFrontCar()->IsAtEndOfStreet(network_street_state["rue-d-athenes"]));
+    ASSERT_EQ(1, network_street_state["rue-d-athenes"]->GetCarQueue().size());
+    ASSERT_TRUE(network_street_state["rue-d-athenes"]->GetFrontCar()->IsAtEndOfStreet(*network_street_state["rue-d-athenes"]));
     // Check car 2 assigned path
-    Car* p_car_2 = network_street_state["rue-d-athenes"].GetFrontCar();
+    Car* p_car_2 = network_street_state["rue-d-athenes"]->GetFrontCar();
     std::vector<std::string> expected_path_2 = { "rue-d-athenes", "rue-de-moscou", "rue-de-londres" };
     ASSERT_EQ(expected_path_2, p_car_2->GetJourneyPath());
-    ASSERT_TRUE(p_car_2->IsAtEndOfStreet(network_street_state["rue-d-athenes"]));
+    ASSERT_TRUE(p_car_2->IsAtEndOfStreet(*network_street_state["rue-d-athenes"]));
 
     // Calculate traffic schedule from input solution file.
     tn.SetTrafficLights("../Input/a_solution.txt");
@@ -72,40 +72,40 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     // Validate first time step. (t = 1)
     tn.Step();
     network_street_state = tn.GetStreetState(); // Get the new street state!
-    EXPECT_EQ(0, network_street_state["rue-de-londres"].GetCarQueue()->size());
-    ASSERT_EQ(1, network_street_state["rue-d-amsterdam"].GetCarQueue()->size());
-    p_car_1 = network_street_state["rue-d-amsterdam"].GetFrontCar();
+    EXPECT_EQ(0, network_street_state["rue-de-londres"]->GetCarQueue().size());
+    ASSERT_EQ(1, network_street_state["rue-d-amsterdam"]->GetCarQueue().size());
+    p_car_1 = network_street_state["rue-d-amsterdam"]->GetFrontCar();
     ASSERT_EQ(p_car_1->GetJourneyPath(), expected_path_1);
-    ASSERT_TRUE(p_car_1->IsAtEndOfStreet(network_street_state["rue-d-amsterdam"]));
+    ASSERT_TRUE(p_car_1->IsAtEndOfStreet(*network_street_state["rue-d-amsterdam"]));
     ASSERT_FALSE(tn.GetIntersectionById(1)->GetTrafficLightAtStreet("rue-d-amsterdam")->IsGreen());
 
 
-    EXPECT_EQ(0, network_street_state["rue-d-athenes"].GetCarQueue()->size());
-    ASSERT_EQ(1, network_street_state["rue-de-moscou"].GetCarQueue()->size());
-    ASSERT_EQ(network_street_state["rue-de-moscou"].GetFrontCar()->GetJourneyPath(), expected_path_2);
-    p_car_2 = network_street_state["rue-de-moscou"].GetFrontCar();
+    EXPECT_EQ(0, network_street_state["rue-d-athenes"]->GetCarQueue().size());
+    ASSERT_EQ(1, network_street_state["rue-de-moscou"]->GetCarQueue().size());
+    ASSERT_EQ(network_street_state["rue-de-moscou"]->GetFrontCar()->GetJourneyPath(), expected_path_2);
+    p_car_2 = network_street_state["rue-de-moscou"]->GetFrontCar();
     ASSERT_FALSE(p_car_2 == nullptr);
-    ASSERT_FALSE(p_car_2->IsAtEndOfStreet(network_street_state["rue-de-moscou"]));
+    ASSERT_FALSE(p_car_2->IsAtEndOfStreet(*network_street_state["rue-de-moscou"]));
 
     // Validate (t = 2)
     tn.Step();
     network_street_state = tn.GetStreetState(); // Get the new street state!
     ASSERT_TRUE(tn.GetIntersectionById(1)->GetTrafficLightAtStreet("rue-d-amsterdam")->IsGreen());
-    ASSERT_TRUE(network_street_state["rue-d-amsterdam"].IsEmpty());
-    ASSERT_EQ(2, network_street_state["rue-de-moscou"].GetCarQueue()->size());
-    Car car_1 = network_street_state["rue-de-moscou"].GetCarQueue()->back();
+    ASSERT_TRUE(network_street_state["rue-d-amsterdam"]->IsEmpty());
+    ASSERT_EQ(2, network_street_state["rue-de-moscou"]->GetCarQueue().size());
+    Car car_1 = *network_street_state["rue-de-moscou"]->GetCarQueue().back();
     ASSERT_EQ(car_1.GetJourneyPath(), expected_path_1);
 
-    ASSERT_EQ(network_street_state["rue-de-moscou"].GetFrontCar()->GetJourneyPath(), expected_path_2);
-    p_car_2 = network_street_state["rue-de-moscou"].GetFrontCar();
+    ASSERT_EQ(network_street_state["rue-de-moscou"]->GetFrontCar()->GetJourneyPath(), expected_path_2);
+    p_car_2 = network_street_state["rue-de-moscou"]->GetFrontCar();
     ASSERT_FALSE(p_car_2 == nullptr);
-    ASSERT_FALSE(p_car_2->IsAtEndOfStreet(network_street_state["rue-de-moscou"]));
+    ASSERT_FALSE(p_car_2->IsAtEndOfStreet(*network_street_state["rue-de-moscou"]));
 
     // Validate (t = 3)
     tn.Step();
     network_street_state = tn.GetStreetState(); // TODO Maybe this should be a map to pointers.
-    ASSERT_EQ(2, network_street_state["rue-de-moscou"].GetCarQueue()->size());
-    ASSERT_EQ(network_street_state["rue-de-moscou"].GetFrontCar()->GetJourneyPath(), expected_path_2);
+    ASSERT_EQ(2, network_street_state["rue-de-moscou"]->GetCarQueue().size());
+    ASSERT_EQ(network_street_state["rue-de-moscou"]->GetFrontCar()->GetJourneyPath(), expected_path_2);
 
     // Validate (t = 4)
     tn.Step();
@@ -118,12 +118,12 @@ TEST(TrafficNetworkSuite, TrafficNetworkTest)
     // Validate (t = 5)
     tn.Step();
     network_street_state = tn.GetStreetState(); // Get the new street state!
-    ASSERT_EQ(0, network_street_state["rue-de-rome"].GetCarQueue()->size());
+    ASSERT_EQ(0, network_street_state["rue-de-rome"]->GetCarQueue().size());
 
     // Validate (t = 6)
     tn.Step();
     network_street_state = tn.GetStreetState(); // Get the new street state!
-    ASSERT_EQ(1, network_street_state["rue-de-rome"].GetCarQueue()->size());
+    ASSERT_EQ(1, network_street_state["rue-de-rome"]->GetCarQueue().size());
 
 	ASSERT_EQ(expected_point_total, tn.GetPoints());
 }
